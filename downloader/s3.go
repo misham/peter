@@ -1,8 +1,8 @@
 package downloader
 
 import (
-	"bytes"
 	"os"
+	"path/filepath"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/defaults"
@@ -31,33 +31,24 @@ func Get(conf *S3Config) (string, error) {
 
 	tmpDir := os.TempDir()
 
-	destFile := pathWithFile(&tmpDir, conf.Revision)
+	destFile := filepath.Join(tmpDir, *conf.Revision)
 
 	downloadFile, err := os.Create(destFile)
 	if err != nil {
 		return "", err
 	}
 
-	revisionPath := pathWithFile(conf.RevisionPath, conf.Revision)
+	filePath := filepath.Join(*conf.RevisionPath, *conf.Revision)
 	downloader := s3manager.NewDownloader(nil)
 	_, err = downloader.Download(
 		downloadFile,
 		&s3.GetObjectInput{
 			Bucket: conf.Bucket,
-			Key:    &revisionPath,
+			Key:    &filePath,
 		})
 	if err != nil {
 		return "", err
 	}
 
 	return destFile, nil
-}
-
-// pathWithFile puts together the path to the file with the file name.
-func pathWithFile(path *string, revision *string) string {
-	var fullRevisionPath bytes.Buffer
-	fullRevisionPath.WriteString(*path)
-	fullRevisionPath.WriteString(*revision)
-
-	return fullRevisionPath.String()
 }
