@@ -4,24 +4,21 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"path/filepath"
 )
 
 // Extract extracts file found at the src into dest and
 // returns the full path to the extracted directory with any errors.
-func Extract(dest *string, src *string) (string, error) {
-	extractPath := filepath.Join(*dest, filepath.Base(*src))
-
+func Extract(dest *string, src *string) error {
 	file, err := os.Open(*src)
 	if err != nil {
-		return "", err
+		return err
 	}
 	defer file.Close()
 
 	buff := make([]byte, 512)
 	_, err = file.Read(buff)
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	filetype := http.DetectContentType(buff)
@@ -35,5 +32,5 @@ func Extract(dest *string, src *string) (string, error) {
 		err = fmt.Errorf("Unknown file type: %s", filetype)
 	}
 
-	return extractPath, err
+	return err
 }
