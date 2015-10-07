@@ -3,7 +3,7 @@ package extractor
 import (
 	"archive/zip"
 	"io/ioutil"
-	"path/filepath"
+	"path"
 )
 
 func unzip(src *string, dest *string) error {
@@ -21,7 +21,7 @@ func unzip(src *string, dest *string) error {
 		defer zipReader.Close()
 
 		info := CompressedFileInfo{
-			path: filepath.Join(*dest, file.Name),
+			path: path.Join(*dest, file.Name),
 			info: file.FileInfo(),
 		}
 

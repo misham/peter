@@ -5,7 +5,7 @@ import (
 	"compress/gzip"
 	"io"
 	"os"
-	"path/filepath"
+	"path"
 )
 
 func untgz(src *string, dest *string) error {
@@ -37,7 +37,7 @@ func untgz(src *string, dest *string) error {
 		}
 
 		info := CompressedFileInfo{
-			path:     filepath.Join(*dest, hdr.Name),
+			path:     path.Join(*dest, hdr.Name),
 			info:     hdr.FileInfo(),
 			linkName: hdr.Linkname,
 		}
